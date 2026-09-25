@@ -1,0 +1,42 @@
+name: Run analysis
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["outputs/**", "data/**", "README.md"]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 2 * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: run-analysis
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python run.py
+      - name: Commit refreshed data, figures and README
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/results
+          cp -r outputs data README.md /tmp/results/
+          git fetch origin main
+          git reset --hard origin/main
+          cp -r /tmp/results/outputs /tmp/results/data /tmp/results/README.md .
+          git add -A outputs data README.md
+          if ! git diff --staged --quiet; then
+            git commit -m "Refresh data and results [skip ci]"
+            git push
+          fi
