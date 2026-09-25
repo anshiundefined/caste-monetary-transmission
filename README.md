@@ -1,7 +1,6 @@
 # Caste and Monetary Transmission in India
 
 **Heterogeneous Monetary Policy Transmission in Segmented Credit Markets: The Role of Caste in India**
-Meetanshi Gaba · MSc Economics (Data Analytics), Symbiosis School of Economics · Advanced Macroeconomics II
 
 This repository contains the replication package and extensions for my paper.
 
